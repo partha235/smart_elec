@@ -1,0 +1,13 @@
+# for testing led row
+from machine import Pin
+from utime import sleep_ms
+
+# List of pins
+pins = [4, 16, 17, 5, 18]
+
+while True:
+    for i in pins:
+        p = Pin(i, Pin.OUT)  # create Pin object for each GPIO
+        p.on()               # turn it ON (high)
+        sleep_ms(500)
+        p.off()              # turn it OFF if you want only blink

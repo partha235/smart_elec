@@ -1,0 +1,30 @@
+# ths is for led row turn on with distance. 
+from machine import Pin, PWM, time_pulse_us
+from utime import sleep_ms, sleep_us
+
+# declaring pins
+pins = [4, 16, 17, 5, 18]
+trigger = Pin(26, Pin.OUT)
+echo = Pin(25, Pin.IN)
+
+# function to get cm from ultrasonic sensor
+def get_distance():
+    trigger.off()
+    sleep_us(2)
+    trigger.on()
+    sleep_us(10)
+    trigger.off()
+    duration = time_pulse_us(echo, 1, 30000)
+    return (duration / 2) / 29.1
+
+leds = [PWM(Pin(i, Pin.OUT)) for i in pins]
+for led in leds:
+    led.freq(1000)
+
+while True:
+    dist = get_distance()
+    print("Distance: {:.2f} cm".format(dist))
+    num_leds = min(int((50 - dist) // 10) + 1, 5) if dist <= 40 else 0
+    for i in range(5):
+        leds[i].duty_u16(32768 if i < num_leds else 0)  # 50% brightness if ON
+    sleep_ms(100)
